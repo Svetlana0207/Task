@@ -1,29 +1,27 @@
-
 import { useSelector, useDispatch } from "react-redux";
 import {
   clearStreets,
   clearBuildings,
   clearFlats,
-  clearClients
+  clearClients,
 } from "./actions";
 import {
-  
   loadCompanies,
   loadStreets,
   loadBuildings,
   loadFlats,
   loadClients,
   deleteC,
-  saveClient
+  saveClient,
 } from "./companiesReducer";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
-  const[email,setEmail]=useState('')
-  const[phone,setPhone]=useState('')
-  const[name,setName]=useState('')
-  const[search,setSearch]=useState('')
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [name, setName] = useState("");
+  const [search, setSearch] = useState("");
   const dispatch = useDispatch();
   let companies = useSelector((state) => state.companies);
   let streets = useSelector((state) => state.streets).reduce((a, x) => {
@@ -36,26 +34,17 @@ function App() {
     return a;
   }, {});
   let flats = useSelector((state) => state.flats).reduce((a, x) => {
-    a[x.houseId] = x.flatsArr
+    a[x.houseId] = x.flatsArr;
     return a;
   }, {});
 
-  let clientsArr=useSelector((state) => state.clients).reduce((a, x) => {
-    a[x.addressId] = x.clientsArr
+  let clientsArr = useSelector((state) => state.clients).reduce((a, x) => {
+    a[x.addressId] = x.clientsArr;
     return a;
   }, {});
-
-  console.log("CLIENT_ARR",clientsArr)
-  console.log("FLATS",flats)
-  console.log("BUILDINGS",buildings)
-  console.log("STREETS",streets)
-  console.log("COMPANIES",companies)
-
 
   const onLoad = () => {
-  
-      dispatch(loadCompanies());
-   
+    dispatch(loadCompanies());
   };
 
   const renderStreets = (companyId) => {
@@ -82,41 +71,30 @@ function App() {
     }
   };
 
-  const deleteClient = (clientId,houseId, addressId) => {
-  
-    dispatch(deleteC(clientId,houseId, addressId));
- 
+  const deleteClient = (clientId, houseId, addressId) => {
+    dispatch(deleteC(clientId, houseId, addressId));
   };
 
-  const addClient=(houseId,addressId)=>{
-    const client={
-      Name:name,
-      Email:email,
-      Phone:phone
-    }
-    dispatch(saveClient(client,houseId,addressId));
-   console.log("ADDRESS_ID",addressId)
-    setName('')
-    setEmail('')
-    setPhone('')
+  const addClient = (houseId, addressId) => {
+    const client = {
+      Name: name,
+      Email: email,
+      Phone: phone,
+    };
+    dispatch(saveClient(client, houseId, addressId));
+    
+    setName("");
+    setEmail("");
+    setPhone("");
+  };
 
-  }
-
- 
- 
-  const renderClients=(houseId,addressId)=>{
-
+  const renderClients = (houseId, addressId) => {
     if (!clientsArr[addressId]) {
-      dispatch(loadClients(houseId,addressId));
-
+      dispatch(loadClients(houseId, addressId));
     } else if (clientsArr[addressId]) {
       dispatch(clearClients(addressId));
     }
-    
-   console.log(addressId)
-  }
-
-
+  };
 
   return (
     <>
@@ -127,14 +105,12 @@ function App() {
           <li
             onClick={() => {
               renderStreets(company.id);
-         
             }}
             key={company.id}
           >
             {company.name}
-            
+
             <ul>
-           
               {streets[company.id]
                 ? Object.entries(streets[company.id]).map((s) => {
                     return (
@@ -145,7 +121,7 @@ function App() {
                         }}
                       >
                         {s[1]}
-                        
+
                         <ul>
                           {buildings[s[0]]
                             ? Object.entries(buildings[s[0]]).map((b) => {
@@ -163,85 +139,148 @@ function App() {
                                             (f) => {
                                               return (
                                                 <li
-                                                onClick={(e) => {
-                                                  e.stopPropagation();
-                                                  renderClients(b[0],f[1].addressId);
-                                                }}
-                                              >
+                                                  onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    renderClients(
+                                                      b[0],
+                                                      f[1].addressId
+                                                    );
+                                                  }}
+                                                >
                                                   {f[0]}
-                                             
+
                                                   <div className="container">
-                                                    {clientsArr[f[1].addressId]?Object.entries(clientsArr[f[1].addressId]).map((c) => {
-                                                      
-                                                    
-                                                         return (
-                                                        <>
-                                                        
-                                                     
-                                                      
-                                                          {Object.entries(c[1]).map(cc=>{
-                                                            return(
-                                                              <>
-                                                               <div className="client">
-                                                            <p>Name:{cc[1].name}</p>
-                                                          <p>Phone:{cc[1].email}</p>
-                                                          <p>Email:{cc[1].phone}</p>
-                                                          <button
-                                                            onClick={(e) => {
-                                                              e.stopPropagation();
-                                                              deleteClient(
-                                                                cc[1].bindId,
-                                                                b[0],c[0]
-                                                              );
-                                                            }}
-                                                          >
-                                                            Удалить жильца
-                                                          </button>
-                                                          </div>
-                                                          </>
-                                                            )
-                                                          })}
-                                                        
-                                                        
-                                                  
-                                                            <div onClick={(e)=>{e.stopPropagation()}} className="client">
-                                                            <form onSubmit={(e) => {
-                                                                  e.preventDefault();
-                                                                addClient(
-                                                                  b[0],f[1].addressId
-                                                                )}}>
-                                                              <input
-                                                                placeholder="Name"
-                                                                required
-                                                                value={name}
-                                                                onChange={(e)=>{setName(e.target.value)}}
-                                                              />
-                                                              <input
-                                                                placeholder="Email"
-                                                                required
-                                                                value={email}
-                                                                onChange={(e)=>{setEmail(e.target.value)}}
-                                                                type="email"
-                                                              />
-                                                              <input
-                                                                placeholder="Phone"
-                                                                required
-                                                                value={phone}
-                                                                onChange={(e)=>{setPhone(e.target.value)}}
-                                                              />
-                                                              <button type="submit" >
-                                                                Добавить жильца
-                                                              </button>
-                                                              </form>
-                                                          </div>
-                                                          </>
-                                                      )}
-                                                         
-                                                                
-                                                     ):""}
-                                                  
+                                                    {clientsArr[f[1].addressId]
+                                                      ? Object.entries(
+                                                          clientsArr[
+                                                            f[1].addressId
+                                                          ]
+                                                        ).map((c) => {
+                                                          return (
+                                                            <>
+                                                              {Object.entries(
+                                                                c[1]
+                                                              ).map((cc) => {
+                                                                return (
+                                                                  <>
+                                                                    <div className="client">
+                                                                      <p>
+                                                                        Name:
+                                                                        {
+                                                                          cc[1]
+                                                                            .name
+                                                                        }
+                                                                      </p>
+                                                                      <p>
+                                                                        Phone:
+                                                                        {
+                                                                          cc[1]
+                                                                            .email
+                                                                        }
+                                                                      </p>
+                                                                      <p>
+                                                                        Email:
+                                                                        {
+                                                                          cc[1]
+                                                                            .phone
+                                                                        }
+                                                                      </p>
+                                                                      <button
+                                                                        onClick={(
+                                                                          e
+                                                                        ) => {
+                                                                          e.stopPropagation();
+                                                                          deleteClient(
+                                                                            cc[1]
+                                                                              .bindId,
+                                                                            b[0],
+                                                                            c[0]
+                                                                          );
+                                                                        }}
+                                                                      >
+                                                                        Удалить
+                                                                        жильца
+                                                                      </button>
+                                                                    </div>
+                                                                  </>
+                                                                );
+                                                              })}
+
+                                                              <div
+                                                                onClick={(
+                                                                  e
+                                                                ) => {
+                                                                  e.stopPropagation();
+                                                                }}
+                                                                className="client"
+                                                              >
+                                                                <form
+                                                                  onSubmit={(
+                                                                    e
+                                                                  ) => {
+                                                                    e.preventDefault();
+                                                                    addClient(
+                                                                      b[0],
+                                                                      f[1]
+                                                                        .addressId
+                                                                    );
+                                                                  }}
+                                                                >
+                                                                  <input
+                                                                    placeholder="Name"
+                                                                    required
+                                                                    value={name}
+                                                                    onChange={(
+                                                                      e
+                                                                    ) => {
+                                                                      setName(
+                                                                        e.target
+                                                                          .value
+                                                                      );
+                                                                    }}
+                                                                  />
+                                                                  <input
+                                                                    placeholder="Email"
+                                                                    required
+                                                                    value={
+                                                                      email
+                                                                    }
+                                                                    onChange={(
+                                                                      e
+                                                                    ) => {
+                                                                      setEmail(
+                                                                        e.target
+                                                                          .value
+                                                                      );
+                                                                    }}
+                                                                    type="email"
+                                                                  />
+                                                                  <input
+                                                                    placeholder="Phone"
+                                                                    required
+                                                                    value={
+                                                                      phone
+                                                                    }
+                                                                    onChange={(
+                                                                      e
+                                                                    ) => {
+                                                                      setPhone(
+                                                                        e.target
+                                                                          .value
+                                                                      );
+                                                                    }}
+                                                                  />
+                                                                  <button type="submit">
+                                                                    Добавить
+                                                                    жильца
+                                                                  </button>
+                                                                </form>
+                                                              </div>
+                                                            </>
+                                                          );
+                                                        })
+                                                      : ""}
                                                   </div>
-                                              
                                                 </li>
                                               );
                                             }
@@ -262,8 +301,6 @@ function App() {
         );
       })}
       <hr />
- 
-    
     </>
   );
 }
