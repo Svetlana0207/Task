@@ -23,22 +23,22 @@ function App() {
   const [name, setName] = useState("");
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();
-  let companies = useSelector((state) => state.companies);
-  let streets = useSelector((state) => state.streets).reduce((a, x) => {
+  const companies = useSelector((state) => state.companies);
+  const streets = useSelector((state) => state.streets).reduce((a, x) => {
     a[x.companyId] = x.streetArr;
     return a;
   }, {});
 
-  let buildings = useSelector((state) => state.buildings).reduce((a, x) => {
+  const buildings = useSelector((state) => state.buildings).reduce((a, x) => {
     a[x.streetId] = x.buildingsArr;
     return a;
   }, {});
-  let flats = useSelector((state) => state.flats).reduce((a, x) => {
+  const flats = useSelector((state) => state.flats).reduce((a, x) => {
     a[x.houseId] = x.flatsArr;
     return a;
   }, {});
 
-  let clientsArr = useSelector((state) => state.clients).reduce((a, x) => {
+  const clientsArr = useSelector((state) => state.clients).reduce((a, x) => {
     a[x.addressId] = x.clientsArr;
     return a;
   }, {});
@@ -82,7 +82,7 @@ function App() {
       Phone: phone,
     };
     dispatch(saveClient(client, houseId, addressId));
-    
+
     setName("");
     setEmail("");
     setPhone("");

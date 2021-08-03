@@ -118,7 +118,7 @@ export const loadStreets = (companyId) => async (dispatch, getState) => {
     `https://dispex.org/api/vtest/HousingStock?companyId=${companyId}`
   ).then((res) => res.json());
 
-  let streets = company.reduce((a, x) => {
+  const streets = company.reduce((a, x) => {
     a[x.streetId] = x.streetName;
     return a;
   }, {});
@@ -134,7 +134,7 @@ export const loadBuildings = (streetId) => async (dispatch, getState) => {
     `https://dispex.org/api/vtest/HousingStock?streetId=${streetId}`
   ).then((res) => res.json());
 
-  let buildings = street.reduce((a, x) => {
+  const buildings = street.reduce((a, x) => {
     a[x.houseId] = x.building;
     return a;
   }, {});
@@ -146,7 +146,7 @@ export const loadFlats = (houseId) => async (dispatch, getState) => {
     `https://dispex.org/api/vtest/HousingStock?houseId=${houseId}`
   ).then((res) => res.json());
 
-  let flats = building.reduce((a, x) => {
+  const flats = building.reduce((a, x) => {
     a[x.flat] = { clients: x.clients, addressId: x.addressId };
     return a;
   }, {});
@@ -160,7 +160,7 @@ export const loadClients =
       `https://dispex.org/api/vtest/HousingStock?houseId=${houseId}`
     ).then((res) => res.json());
 
-    let clients = building
+    const clients = building
       .filter((item) => item.addressId == addressId)
       .reduce((a, x) => {
         a[x.addressId] = x.clients;
